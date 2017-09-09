@@ -1,3 +1,5 @@
+import React from "react";
+
 var $ = require('jquery');
 
 
@@ -7,9 +9,9 @@ export default class header extends React.Component {
     super(props);
     this.state = {greeting: 'Hello ' + this.props.name};
 
-    this.handleSubmit= this.this.handleSubmit.bind(this);
-    this.onClick= this.this.onClick.bind(this);
-    this.changeState= this.this.changeState.bind(this);
+    this.handleSubmit= this.handleSubmit.bind(this);
+    this.onClick= this.onClick.bind(this);
+    this.changeState= this.changeState.bind(this);
   }
 
   handleSubmit() {
@@ -44,8 +46,8 @@ export default class header extends React.Component {
 
   render() {
     return (
-      <div>
-
+      <div className="navheader">
+        Header Test
       </div>
 
     )
