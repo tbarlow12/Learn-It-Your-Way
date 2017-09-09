@@ -1,8 +1,25 @@
 import pdb
 import json
 from data_tools import loading
+from operator import itemgetter
 
 
+def get_features(format,d):
+    form_data = []
+    for key in d:
+        form_data.append([format[key]['index'],key,d[key]])
+    sorted(form_data,key=itemgetter(0))
+    features = []
+    for t in form_data:
+        if len(format[t[1]]['vals_mapping']) == 0:
+            #number
+            try:
+                features.append(int(t[2]))
+            except ValueError:
+                features.append(float(t[2]))
+        else:
+            features.append(format[t[1]]['vals_mapping'][t[2]])
+    return [features]
 
 def numeric_labels_features(csv):
     with open(csv) as f:
