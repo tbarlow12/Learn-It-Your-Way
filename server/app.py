@@ -4,6 +4,7 @@ import pdb
 from ml_models import sklearn, my_models
 from data_tools import loading, csv_tools
 import uuid
+import json
 from operator import itemgetter
 
 app = Flask(__name__)
@@ -13,10 +14,10 @@ app = Flask(__name__)
 def index():
     return "Hello, World!"
 
-def get_features(format,request):
+def get_features(format,d):
     form_data = []
-    for key in request.form:
-        form_data.append([format[key]['index'],key,request.form[key]])
+    for key in d:
+        form_data.append([format[key]['index'],key,d[key]])
     sorted(form_data,key=itemgetter(0))
     features = []
     for t in form_data:
@@ -44,8 +45,20 @@ def predict_single(id,algorithm):
     #After user has created a model, this loads the model and returns the prediction
     model = loading.load_model(id,algorithm)
     format = loading.load_format(id)
-    features = get_features(format,request) 
+    features = get_features(format,request.form) 
     return str(model.predict(features))
+
+@app.route('/predict/multi/<id>/<algorithm>',methods=['GET','POST'])
+def predict_multi(id,algorithm):
+    content = request.get_json()
+    model = loading.load_model(id,algorithm)
+    format = loading.load_format(id)    
+    for instance in content:
+        features = get_features(format,instance)
+        instance['Label'] = str(model.predict(features)[0])
+    return str(content)
+
+        
 
 @app.route('/regression',methods=['GET','POST'])
 def regression():
