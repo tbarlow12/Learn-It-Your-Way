@@ -43,5 +43,16 @@ def clustering():
     #return guid to user
     return id
 
+@app.route('/svm')
+def svm():
+    #load dataset (current temporary dataset)
+    features, labels = csv_tools.get_labels_features_csv('datasets/test_data.csv')
+    #train model
+    model = sklearn.support_vector_machine(features,labels)
+    #generate guid and save model using guid
+    id = loading.save_model(model)
+    #return guid to user
+    return id
+
 if __name__ == '__main__':
     app.run(debug=True)

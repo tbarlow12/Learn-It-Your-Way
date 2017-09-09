@@ -1,5 +1,6 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import KMeans
+from sklearn import svm
 
 
 def regression(features,labels):
@@ -12,4 +13,7 @@ def cluster(instances,k):
     model.fit(instances)
     return model
 
-    
+def support_vector_machine(features,labels):
+    model = svm.SVC()
+    model.fit(features,labels)
+    return model
