@@ -1,15 +1,21 @@
 #!flask/bin/python
-from flask import Flask
+from flask import Flask, render_template
 import pdb
 from ml_models import sklearn, my_models
 from data_tools import loading, csv_tools
 
-app = Flask(__name__)
+app = Flask(__name__,
+static_folder="../static/dist",
+template_folder="../static")
 
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return render_template("index.html")
+
+@app.route("/hello")
+def hello():
+    return "Hello World!”
 
 def get_features():
     return [[0,2,4,6,4],[1,4,2,3,5]]
