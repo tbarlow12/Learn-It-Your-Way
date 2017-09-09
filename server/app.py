@@ -4,6 +4,7 @@ import pdb
 from ml_models import sklearn, my_models
 from data_tools import loading, csv_tools
 import uuid
+from operator import itemgetter
 
 app = Flask(__name__)
 
@@ -12,8 +13,22 @@ app = Flask(__name__)
 def index():
     return "Hello, World!"
 
-def get_features():
-    return [[0,2,4,6,4],[1,4,2,3,5]]
+def get_features(format,request):
+    form_data = []
+    for key in request.form:
+        form_data.append([format[key]['index'],key,request.form[key]])
+    sorted(form_data,key=itemgetter(0))
+    features = []
+    for t in form_data:
+        if len(format[t[1]]['vals_mapping']) == 0:
+            #number
+            try:
+                features.append(int(t[2]))
+            except ValueError:
+                features.append(float(t[2]))
+        else:
+            features.append(format[t[1]]['vals_mapping'][t[2]])
+    return [features]
 
 def get_dataset(request):
     id = str(uuid.uuid4())
@@ -24,12 +39,13 @@ def get_dataset(request):
         features, labels, titles = csv_tools.generic_labels_features(id, path)
         return id, features, labels, titles
         
-@app.route('/predict/<id>')
-def predict(id):
+@app.route('/predict/single/<id>/<algorithm>',methods=['GET','POST'])
+def predict_single(id,algorithm):
     #After user has created a model, this loads the model and returns the prediction
-    model = loading.load_model(id)
-    features = get_features() 
-    return model.predict(features)
+    model = loading.load_model(id,algorithm)
+    format = loading.load_format(id)
+    features = get_features(format,request) 
+    return str(model.predict(features))
 
 @app.route('/regression',methods=['GET','POST'])
 def regression():
@@ -38,7 +54,7 @@ def regression():
     #train model
     model = sklearn.regression(features,labels)
     #generate guid and save model using guid
-    id = loading.save_model(model)
+    id = loading.save_model(model, id,'regression')
     #return guid to user
     return id
 
@@ -49,7 +65,7 @@ def clustering():
     #train model
     model = sklearn.cluster(features)
     #generate guid and save model using guid
-    id = loading.save_model(model)
+    id = loading.save_model(model,'clustering')
     #return guid to user
     return id
 
@@ -60,7 +76,7 @@ def svm():
     #train model
     model = sklearn.support_vector_machine(features,labels)
     #generate guid and save model using guid
-    id = loading.save_model(model)
+    id = loading.save_model(model,'svm')
     #return guid to user
     return id
 
