@@ -24,7 +24,7 @@ def predict(id):
 @app.route('/regression')
 def regression():
     #load dataset (current temporary dataset)
-    features, labels = csv_tools.get_labels_features_csv('datasets/test_data.csv')
+    features, labels = csv_tools.numeric_labels_features('datasets/test_data.csv')
     #train model
     model = sklearn.regression(features,labels)
     #generate guid and save model using guid
@@ -35,7 +35,7 @@ def regression():
 @app.route('/clustering')
 def clustering():
     #load dataset (current temporary dataset)
-    features, labels = csv_tools.get_labels_features_csv('datasets/test_data.csv')
+    features, labels = csv_tools.numeric_labels_features('datasets/test_data.csv')
     #train model
     model = sklearn.cluster(features)
     #generate guid and save model using guid
@@ -46,7 +46,7 @@ def clustering():
 @app.route('/svm')
 def svm():
     #load dataset (current temporary dataset)
-    features, labels = csv_tools.get_labels_features_csv('datasets/test_data.csv')
+    features, labels = csv_tools.numeric_labels_features('datasets/test_data.csv')
     #train model
     model = sklearn.support_vector_machine(features,labels)
     #generate guid and save model using guid
