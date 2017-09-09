@@ -10,5 +10,6 @@ def numeric_labels_features(csv):
             items = instance.split(',')
             features.append([float(x) for x in items[:-1]])
             labels.append(float(items[-1]))
-        return features,labels
+        return features, labels, titles
+
 

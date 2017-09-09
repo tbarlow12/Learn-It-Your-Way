@@ -2,9 +2,12 @@ from ml_models import sklearn, my_models
 from data_tools import csv_tools, loading
 import pdb
 
-features, labels = csv_tools.numeric_labels_features('datasets/test_data.csv')
+features, labels, titles = csv_tools.numeric_labels_features('datasets/test_data.csv')
 cluster_model = sklearn.cluster(features,2)
 regression_model = sklearn.regression(features,labels)
 
-print(loading.save_model(cluster_model))
-print(loading.save_model(regression_model))
+cluster_id = loading.save_model(cluster_model)
+regression_id = loading.save_model(regression_model)
+
+loading.save_format(titles,cluster_id)
+loading.save_format(titles,regression_id)
