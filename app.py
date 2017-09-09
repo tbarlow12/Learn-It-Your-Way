@@ -11,15 +11,37 @@ app = Flask(__name__)
 def index():
     return "Hello, World!"
 
+def get_features():
+    return [[0,2,4,6,4],[1,4,2,3,5]]
+
+@app.route('/predict/<id>')
+def predict(id):
+    #After user has created a model, this loads the model and returns the prediction
+    model = loading.load_model(id)
+    features = get_features() 
+    return model.predict(features)
+
 @app.route('/regression')
 def regression():
-    #load dataset
+    #load dataset (current temporary dataset)
+    features, labels = csv_tools.get_labels_features_csv('datasets/test_data.csv')
     #train model
-    #generate guid
-    #save model using guid
+    model = sklearn.regression(features,labels)
+    #generate guid and save model using guid
+    id = loading.save_model(model)
     #return guid to user
-    #when user makes another call to endpoint, load model
-    return "Regression"
+    return id
+
+@app.route('/clustering')
+def clustering():
+    #load dataset (current temporary dataset)
+    features, labels = csv_tools.get_labels_features_csv('datasets/test_data.csv')
+    #train model
+    model = sklearn.cluster(features)
+    #generate guid and save model using guid
+    id = loading.save_model(model)
+    #return guid to user
+    return id
 
 if __name__ == '__main__':
     app.run(debug=True)
