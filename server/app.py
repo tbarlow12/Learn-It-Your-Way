@@ -4,6 +4,7 @@ import pdb
 from ml_models import sklearn, my_models
 from data_tools import loading, csv_tools
 import uuid
+from operator import itemgetter
 
 app = Flask(__name__)
 
@@ -13,8 +14,21 @@ def index():
     return "Hello, World!"
 
 def get_features(format,request):
-    pdb.set_trace()
-    return [[0,2,4,6,4],[1,4,2,3,5]]
+    form_data = []
+    for key in request.form:
+        form_data.append([format[key]['index'],key,request.form[key]])
+    sorted(form_data,key=itemgetter(0))
+    features = []
+    for t in form_data:
+        if len(format[t[1]]['vals_mapping']) == 0:
+            #number
+            try:
+                features.append(int(t[2]))
+            except ValueError:
+                features.append(float(t[2]))
+        else:
+            features.append(format[t[1]]['vals_mapping'][t[2]])
+    return [features]
 
 def get_dataset(request):
     id = str(uuid.uuid4())
@@ -25,8 +39,8 @@ def get_dataset(request):
         features, labels, titles = csv_tools.generic_labels_features(id, path)
         return id, features, labels, titles
         
-@app.route('/predict/<id>/<algorithm>',methods=['GET','POST'])
-def predict(id,algorithm):
+@app.route('/predict/single/<id>/<algorithm>',methods=['GET','POST'])
+def predict_single(id,algorithm):
     #After user has created a model, this loads the model and returns the prediction
     model = loading.load_model(id,algorithm)
     format = loading.load_format(id)

@@ -6,7 +6,6 @@ import pdb
 
 def regression(features,labels):
     model = LinearRegression()
-    pdb.set_trace()
     model.fit(features,labels)
     return model
 

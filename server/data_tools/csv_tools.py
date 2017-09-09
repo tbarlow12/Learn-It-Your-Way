@@ -45,7 +45,7 @@ def is_categorical(instances):
 
 def serialize_format(id, titles, instances):
     categorical, distinct_vals, text_indices = is_categorical(instances)
-    format = []
+    format = {}
     mappings = {}
     cat_indices = []
     for i in range(0,len(categorical)):
@@ -61,13 +61,12 @@ def serialize_format(id, titles, instances):
                 mapping[item] = j
                 j += 1
             mappings[i] = mapping
-        format.append({
-            'name': titles[i],
+        format[titles[i]] = {
             'index': i,
             'datatype': data_type,
             'is_categorical': categorical[i],
             'vals_mapping': mapping
-        })
+        }
     
     return cat_indices, mappings, format
 
