@@ -63,6 +63,7 @@ def serialize_format(id, titles, instances):
             mappings[i] = mapping
         format.append({
             'name': titles[i],
+            'index': i,
             'datatype': data_type,
             'is_categorical': categorical[i],
             'vals_mapping': mapping
@@ -90,13 +91,11 @@ def generic_labels_features(id, csv):
         loading.save_format(format,id)
         encode_instances(instances,cat_indices,mappings)
 
-        pdb.set_trace()
         features = []
         labels = []
         for instance in instances:
             features.append(instance[:-1])
             labels.append(instance[-1])
-        pdb.set_trace()
         return features, labels, titles
 
 def get_text_indices(lines):

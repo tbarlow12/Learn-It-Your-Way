@@ -12,7 +12,8 @@ app = Flask(__name__)
 def index():
     return "Hello, World!"
 
-def get_features():
+def get_features(format,request):
+    pdb.set_trace()
     return [[0,2,4,6,4],[1,4,2,3,5]]
 
 def get_dataset(request):
@@ -24,12 +25,13 @@ def get_dataset(request):
         features, labels, titles = csv_tools.generic_labels_features(id, path)
         return id, features, labels, titles
         
-@app.route('/predict/<id>')
-def predict(id):
+@app.route('/predict/<id>/<algorithm>',methods=['GET','POST'])
+def predict(id,algorithm):
     #After user has created a model, this loads the model and returns the prediction
-    model = loading.load_model(id)
-    features = get_features() 
-    return model.predict(features)
+    model = loading.load_model(id,algorithm)
+    format = loading.load_format(id)
+    features = get_features(format,request) 
+    return str(model.predict(features))
 
 @app.route('/regression',methods=['GET','POST'])
 def regression():
@@ -38,7 +40,7 @@ def regression():
     #train model
     model = sklearn.regression(features,labels)
     #generate guid and save model using guid
-    id = loading.save_model(model)
+    id = loading.save_model(model, id,'regression')
     #return guid to user
     return id
 
@@ -49,7 +51,7 @@ def clustering():
     #train model
     model = sklearn.cluster(features)
     #generate guid and save model using guid
-    id = loading.save_model(model)
+    id = loading.save_model(model,'clustering')
     #return guid to user
     return id
 
@@ -60,7 +62,7 @@ def svm():
     #train model
     model = sklearn.support_vector_machine(features,labels)
     #generate guid and save model using guid
-    id = loading.save_model(model)
+    id = loading.save_model(model,'svm')
     #return guid to user
     return id
 
