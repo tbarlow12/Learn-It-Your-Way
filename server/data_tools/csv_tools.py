@@ -28,51 +28,75 @@ def get_data_types(line):
 
 categorical_limit = 2
 
-def is_categorical(lines):
+def is_categorical(instances):
     categorical = []
     all_distinct_vals = []
-    for i in range(0,len(lines[0])):
-        distinct_vals = set([line[i] for line in lines])
+    for i in range(0,len(instances[0])):
+        distinct_vals = set([line[i] for line in instances])
         all_distinct_vals.append(distinct_vals)
         if len(distinct_vals) <= categorical_limit:
             categorical.append(1)
         else:
             categorical.append(0)
-    return categorical, all_distinct_vals
+    text_indices = get_text_indices(instances)
+    for index in text_indices:
+        categorical[index] = 1
+    return categorical, all_distinct_vals, text_indices
+
+def serialize_format(id, titles, instances):
+    categorical, distinct_vals, text_indices = is_categorical(instances)
+    format = []
+    mappings = {}
+    cat_indices = []
+    for i in range(0,len(categorical)):
+        data_type = 'num'
+        if i in text_indices:
+            data_type = 'str'
+        mapping = {}
+        if categorical[i] == 1:
+            cat_indices.append(i)
+            mapping = {}
+            j = 0
+            for item in distinct_vals[i]:
+                mapping[item] = j
+                j += 1
+            mappings[i] = mapping
+        format.append({
+            'name': titles[i],
+            'datatype': data_type,
+            'is_categorical': categorical[i],
+            'vals_mapping': mapping
+        })
+    
+    return cat_indices, mappings, format
+
+def encode_instances(instances,cat_indices,mappings):
+    for instance in instances:
+        for index in cat_indices:
+            instance[index] = mappings[index][instance[index]]
+        for i in range(0,len(instance)):
+            try:
+                instance[i] = int(instance[i])
+            except ValueError:
+                instance[i] = float(instance[i])
 
 def generic_labels_features(id, csv):
-    with open(csv) as f:
+    with open(csv, encoding='utf-8-sig') as f:
         lines = [line.strip().split(',') for line in f.readlines()]
         titles = lines[0]
         instances = lines[1:]
 
-        categorical, distinct_vals = is_categorical(instances)
-        text_indices = get_text_indices(lines)
-
-        format = []
-        for i in range(0,len(categorical)):
-            data_type = 'num'
-            if i in text_indices:
-                data_type = 'str'
-            values = []
-            if categorical[i] == 1:
-                values = distinct_vals[i]
-            format.append({
-                'name': titles[i],
-                'datatype': data_type,
-                'is_categorical': categorical[i],
-                'vals': list(values)
-            })
+        cat_indices, mappings, format = serialize_format(id, titles, instances)
         loading.save_format(format,id)
-        
-        pdb.set_trace()
+        encode_instances(instances,cat_indices,mappings)
 
+        pdb.set_trace()
         features = []
         labels = []
-        for instance in lines:
-            items = instance
-            features.append([items[:-1]])
-            labels.append(items[-1])
+        for instance in instances:
+            features.append(instance[:-1])
+            labels.append(instance[-1])
+        pdb.set_trace()
         return features, labels, titles
 
 def get_text_indices(lines):

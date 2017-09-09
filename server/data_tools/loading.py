@@ -16,13 +16,12 @@ def load_model(id):
     return loaded_model
 
 def save_format(format, id):
-    pdb.set_trace()
     with open(format_dir + id + '.json', 'w') as f:
         json.dump(format,f)
 
 def load_format(id):
     with open(format_dir + id + '.csv', 'r') as f:
-        return f.readlines()[0]
+        return json.load(format_dir + id + '.csv', 'r')
 
 def save_dataset(file, id):
     path = dataset_dir + id + '.csv'
