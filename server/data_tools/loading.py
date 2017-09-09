@@ -1,6 +1,7 @@
 import pandas
 import pickle
 import pdb
+import json
 
 model_dir = 'saved_models/'
 format_dir = 'saved_formats/'
@@ -15,8 +16,9 @@ def load_model(id):
     return loaded_model
 
 def save_format(format, id):
-    with open(format_dir + id + '.csv', 'w') as f:
-        f.write(format + '\n')
+    pdb.set_trace()
+    with open(format_dir + id + '.json', 'w') as f:
+        json.dump(format,f)
 
 def load_format(id):
     with open(format_dir + id + '.csv', 'r') as f:
