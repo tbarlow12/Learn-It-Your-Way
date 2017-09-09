@@ -1,8 +1,14 @@
 import React from "react";
+import Home from "./components/home/home.jsx";
 
 
 export default class App extends React.Component {
   render () {
-    return <p> Welcome to Our Machine Learning API</p>;
+    return (
+      <div>
+        <Header />
+        <Home name="" />
+      </div>
+    );
   }
 }
