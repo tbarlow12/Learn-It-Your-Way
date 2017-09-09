@@ -1,10 +1,12 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import KMeans
 from sklearn import svm
+import pdb
 
 
 def regression(features,labels):
     model = LinearRegression()
+    pdb.set_trace()
     model.fit(features,labels)
     return model
 
