@@ -7,6 +7,7 @@ from operator import itemgetter
 def get_features(format,d):
     form_data = []
     for key in d:
+        pdb.set_trace()
         form_data.append([format[key]['index'],key,d[key]])
     sorted(form_data,key=itemgetter(0))
     features = []
@@ -97,12 +98,30 @@ def encode_instances(instances,cat_indices,mappings):
             except ValueError:
                 instance[i] = float(instance[i])
 
+def index_of(l,t):
+    for i in range(0,len(l)):
+        if l[i] == t:
+            return i
+    return -1
+
+def move_to_last(l,index):
+    result = l[:index]
+    result.extend(l[index+1:])
+    result.append(l[index])
+    return result
+
+top = 100
+
 def generic_labels_features(id, csv):
     with open(csv, encoding='utf-8-sig') as f:
         lines = [line.strip().split(',') for line in f.readlines()]
+        lines = [[x.strip() for x in line] for line in lines if len(line) > 1][:100]
         titles = lines[0]
         instances = lines[1:]
+        label_index = index_of(titles,'Label')
 
+        if label_index != len(titles) - 1:
+            titles = move_to_last(titles,label_index)
         cat_indices, mappings, format = serialize_format(id, titles, instances)
         loading.save_format(format,id)
         encode_instances(instances,cat_indices,mappings)
