@@ -14,15 +14,12 @@ app = Flask(__name__)
 def index():
     return "Hello, World!"
 
-
-
 def get_dataset(request):
     id = str(uuid.uuid4())
     if request.method == 'POST' and len(request.files) > 0:
         file = request.files['file']
         path = loading.save_dataset(file, id)
-        #features, labels, titles = csv_tools.numeric_labels_features(path)
-        features, labels, titles = csv_tools.generic_labels_features(id, path)
+        features, labels, titles = data_cleaning.generic_labels_features(id, path)
         return id, features, labels, titles
         
 @app.route('/predict/single/<id>/<algorithm>',methods=['GET','POST'])
@@ -30,7 +27,7 @@ def predict_single(id,algorithm):
     #After user has created a model, this loads the model and returns the prediction
     model = loading.load_model(id,algorithm)
     format = loading.load_format(id)
-    features = get_features(format,request.form) 
+    features = data_cleaning.get_features(format,request.form) 
     return str(model.predict(features))
 
 @app.route('/predict/multi/<id>/<algorithm>',methods=['GET','POST'])
@@ -39,7 +36,7 @@ def predict_multi(id,algorithm):
     model = loading.load_model(id,algorithm)
     format = loading.load_format(id)    
     for instance in content:
-        features = get_features(format,instance)
+        features = data_cleaning.get_features(format,instance)
         instance['Label'] = str(model.predict(features)[0])
     return str(content)        
 
