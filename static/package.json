@@ -1,0 +1,53 @@
+{
+  "name": "ml-api",
+  "version": "1.0.0",
+  "description": "A machine learning API in python",
+  "main": "index.js",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "webpack": "^3.5.6"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "webpack": "^3.5.6"
+  },
+  "scripts": {
+    "build": "webpack -p --progress --config webpack.config.js",
+    "dev-build": "webpack --progress -d --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --progress -d --config webpack.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbarlow12/ML-API.git"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ]
+  },
+  "keywords": [
+    "machine",
+    "learning",
+    "webpack",
+    "react",
+    "api"
+  ],
+  "author": "HackTheU",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tbarlow12/ML-API/issues"
+  },
+  "homepage": "https://github.com/tbarlow12/ML-API#readme"
+}
