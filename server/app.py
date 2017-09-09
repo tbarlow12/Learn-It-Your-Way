@@ -2,7 +2,7 @@
 from flask import Flask, request, redirect, url_for
 import pdb
 from ml_models import sklearn, my_models
-from data_tools import loading, csv_tools
+from data_tools import loading, data_cleaning
 import uuid
 import json
 from operator import itemgetter
@@ -14,22 +14,7 @@ app = Flask(__name__)
 def index():
     return "Hello, World!"
 
-def get_features(format,d):
-    form_data = []
-    for key in d:
-        form_data.append([format[key]['index'],key,d[key]])
-    sorted(form_data,key=itemgetter(0))
-    features = []
-    for t in form_data:
-        if len(format[t[1]]['vals_mapping']) == 0:
-            #number
-            try:
-                features.append(int(t[2]))
-            except ValueError:
-                features.append(float(t[2]))
-        else:
-            features.append(format[t[1]]['vals_mapping'][t[2]])
-    return [features]
+
 
 def get_dataset(request):
     id = str(uuid.uuid4())
@@ -56,9 +41,7 @@ def predict_multi(id,algorithm):
     for instance in content:
         features = get_features(format,instance)
         instance['Label'] = str(model.predict(features)[0])
-    return str(content)
-
-        
+    return str(content)        
 
 @app.route('/regression',methods=['GET','POST'])
 def regression():
