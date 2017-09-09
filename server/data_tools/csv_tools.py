@@ -1,10 +1,8 @@
 import pdb
+import json
+from data_tools import loading
 
-class format:
-    def __init__(self,_name,_data_type,_values):
-        this.name = _name
-        this.data_type = _data_type
-        this.values = _values
+
 
 def numeric_labels_features(csv):
     with open(csv) as f:
@@ -30,28 +28,43 @@ def get_data_types(line):
 
 categorical_limit = 2
 
-def categorical_or_continuous(lines):
-    result = []
+def is_categorical(lines):
+    categorical = []
+    all_distinct_vals = []
     for i in range(0,len(lines[0])):
         distinct_vals = set([line[i] for line in lines])
+        all_distinct_vals.append(distinct_vals)
         if len(distinct_vals) <= categorical_limit:
-            result.append(0)
+            categorical.append(1)
         else:
-            result.append(1)
-    return result
+            categorical.append(0)
+    return categorical, all_distinct_vals
 
-def generic_labels_features(csv):
+def generic_labels_features(id, csv):
     with open(csv) as f:
         lines = [line.strip().split(',') for line in f.readlines()]
         titles = lines[0]
-        lines = lines[1:]
+        instances = lines[1:]
 
-        category_or_continuous = categorical_or_continuous(lines)
-        
-        data_types = get_data_types(lines[0])
-        
-        text_indices = get_text_indices(data_types)
+        categorical, distinct_vals = is_categorical(instances)
+        text_indices = get_text_indices(lines)
 
+        format = []
+        for i in range(0,len(categorical)):
+            data_type = 'num'
+            if i in text_indices:
+                data_type = 'str'
+            values = []
+            if categorical[i] == 1:
+                values = distinct_vals[i]
+            format.append({
+                'name': titles[i],
+                'datatype': data_type,
+                'is_categorical': categorical[i],
+                'vals': list(values)
+            })
+        loading.save_format(format,id)
+        
         pdb.set_trace()
 
         features = []
@@ -62,9 +75,12 @@ def generic_labels_features(csv):
             labels.append(items[-1])
         return features, labels, titles
 
-def get_text_indices(data_types):
-    indices = []
-    for i in range(0,len(data_types)):
-        if data_types[i] == 'str':
-            indices.append(i)
+def get_text_indices(lines):
+    indices = set()
+    for line in lines:
+        for i in range(0,len(line)):
+            try:
+                x = float(line[i])
+            except ValueError:
+                indices.add(i)
     return indices

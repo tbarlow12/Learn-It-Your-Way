@@ -21,7 +21,7 @@ def get_dataset(request):
         file = request.files['file']
         path = loading.save_dataset(file, id)
         #features, labels, titles = csv_tools.numeric_labels_features(path)
-        features, labels, titles = csv_tools.generic_labels_features(path)
+        features, labels, titles = csv_tools.generic_labels_features(id, path)
         return id, features, labels, titles
         
 @app.route('/predict/<id>')
