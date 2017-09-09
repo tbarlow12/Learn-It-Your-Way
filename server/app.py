@@ -5,7 +5,6 @@ from ml_models import sklearn, my_models
 from data_tools import loading, data_cleaning
 import uuid
 import json
-from operator import itemgetter
 
 app = Flask(__name__)
 
@@ -28,7 +27,7 @@ def predict_single(id,algorithm):
     model = loading.load_model(id,algorithm)
     format = loading.load_format(id)
     features = data_cleaning.get_features(format,request.form) 
-    return str(model.predict(features))
+    return model.predict(features)[0]
 
 @app.route('/predict/multi/<id>/<algorithm>',methods=['GET','POST'])
 def predict_multi(id,algorithm):
@@ -37,7 +36,7 @@ def predict_multi(id,algorithm):
     format = loading.load_format(id)    
     for instance in content:
         features = data_cleaning.get_features(format,instance)
-        instance['Label'] = str(model.predict(features)[0])
+        instance['Label'] = model.predict(features)[0]
     return str(content)        
 
 @app.route('/regression',methods=['GET','POST'])
